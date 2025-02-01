@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const KombatForm = (props) => {
+const KombatForm = ({kombatants, setKombatants}) => {
     const [kombatant, setKombatant] = useState({
         name: " ",
         realm: " ",
@@ -26,8 +26,8 @@ const KombatForm = (props) => {
         e.preventDefault();
         axios.post('http://localhost:8000/api/createKombatant', kombatant)
             .then((res) => {
-                // navigate('/');
                 console.log(res)
+                setKombatants([...kombatants, res.data])
             })
             .catch((err) => {
                 setErrors(err.response.data.errors)
