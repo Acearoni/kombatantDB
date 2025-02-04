@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate} from 'react-router-dom';
 
-const KombatForm = ({kombatants, setKombatants}) => {
-    //props is destructured to prevent having to use props.something repeatedly
-    //creating a single instance of a kombatant and setting it's default state.
+const editKombatant = (props) => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [kombatant, setKombatant] = useState({
         name: " ",
         realm: " ",
@@ -24,31 +25,43 @@ const KombatForm = ({kombatants, setKombatants}) => {
         }
     }
 
+    useEffect(() => {
+        axios.get(`http://localhost:8000/api/findOneKombatant/${id}`)
+            .then((res) => {
+                console.log(res);
+                setKombatant(res.data)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }, [])  
+
     const submitHandler = (e) => {
         e.preventDefault();
         //using the backend createKombatant api call, the data we are sending "kombatant"
-        axios.post('http://localhost:8000/api/createKombatant', kombatant)
+        axios.put(`http://localhost:8000/api/updateKombatant/${id}`, kombatant)
             //res(response) which is the http, then it setsKombatants
             .then((res) => {
                 console.log(res)
-                setKombatants([...kombatants, res.data])
+                navigate('/')
             })
             .catch((err) => {
                 setErrors(err.response.data.errors)
             })
     }
 
+
     return (
         <div>
-            <h1>Add A Kombatant</h1>
+            <h2>Edit This Kombatant</h2>
             <form onSubmit={submitHandler}>
                 <div>
                     <label>Name:</label>
                     <input type="text" name="name" value={kombatant.name} onChange={changeHandler} />
                     {
                         errors.name ?
-                        <p>{errors.name.message}</p>:
-                        null
+                            <p>{errors.name.message}</p> :
+                            null
                     }
                 </div>
                 <div>
@@ -56,8 +69,8 @@ const KombatForm = ({kombatants, setKombatants}) => {
                     <input type="text" name="realm" value={kombatant.realm} onChange={changeHandler} />
                     {
                         errors.realm ?
-                        <p>{errors.realm.message}</p>:
-                        null
+                            <p>{errors.realm.message}</p> :
+                            null
                     }
                 </div>
                 <div>
@@ -65,8 +78,8 @@ const KombatForm = ({kombatants, setKombatants}) => {
                     <input type="number" name="numberOfVictims" value={kombatant.numberOfVictims} onChange={changeHandler} />
                     {
                         errors.numberOfVictims ?
-                        <p>{errors.numberOfVictims.message}</p>:
-                        null
+                            <p>{errors.numberOfVictims.message}</p> :
+                            null
                     }
                 </div>
                 <div>
@@ -74,8 +87,8 @@ const KombatForm = ({kombatants, setKombatants}) => {
                     <input type="checkbox" name='isAlive' checked={kombatant.isAlive} onChange={changeHandler} />
                     {
                         errors.isAlive ?
-                        <p>{errors.isAlive.message}</p>:
-                        null
+                            <p>{errors.isAlive.message}</p> :
+                            null
                     }
                 </div>
                 <button>Submit</button>
@@ -84,4 +97,4 @@ const KombatForm = ({kombatants, setKombatants}) => {
     );
 }
 
-export default KombatForm;
+export default editKombatant;
