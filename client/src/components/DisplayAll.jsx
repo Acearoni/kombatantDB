@@ -15,6 +15,17 @@ const DisplayAll = ({ kombatants, setKombatants }) => {
       })
   }, [])
 
+  const deleteHandler = (id) => {
+    axios.delete(`http://localhost:8000/api/deleteKombatant/${id}`)
+      .then((res) => {
+        console.log(res)
+        setKombatants(kombatants.filter((kombatant) => kombatant._id !== id))
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   return (
     <div className='mt-5'>
       <h3>ALL KOMBATANTS</h3>
@@ -39,9 +50,9 @@ const DisplayAll = ({ kombatants, setKombatants }) => {
                   <td>Alive Status: {kombatant.isAlive ? "Yes" : "No"}</td>
                   <td>
                     <div className="d-flex justify-content-around">
-                      <button className='btn btn-danger mr-1'>Delete</button>
+                      <button onClick={() => deleteHandler(kombatant._id)} className='btn btn-danger mr-1'>Delete</button>
                       <Link to={`/editKombatant/${kombatant._id}`}className='btn btn-primary mr-1'>Edit</Link>
-                      <Link className='btn btn-secondary'>View</Link>
+                      <Link to={`/viewKombatant/${kombatant._id}`} className='btn btn-secondary'>View</Link>
                     </div>
                   </td>
                 </tr>

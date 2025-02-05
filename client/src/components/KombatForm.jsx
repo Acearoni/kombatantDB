@@ -32,6 +32,12 @@ const KombatForm = ({kombatants, setKombatants}) => {
             .then((res) => {
                 console.log(res)
                 setKombatants([...kombatants, res.data])
+                setKombatant({
+                    name: " ",
+                    realm: " ",
+                    numberOfVictims: 0,
+                    isAlive: false
+                })
             })
             .catch((err) => {
                 setErrors(err.response.data.errors)
